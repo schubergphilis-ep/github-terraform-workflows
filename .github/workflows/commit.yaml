@@ -23,7 +23,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Add comment if failed
-        if: steps.semantic.outcome == 'failure'
+        if: always() && (steps.semantic.outputs.error_message != null)
         uses: marocchino/sticky-pull-request-comment@v2
         with:
           header: semantic-pr
@@ -45,7 +45,7 @@ jobs:
             Use `!` after the type (e.g., `feat!:`) to indicate a **breaking change**. You can also include a `BREAKING CHANGE:` footer in the commit body if more context is needed.
 
       - name: Remove sticky comment if fixed
-        if: steps.semantic.outcome == 'success'
+        if: ${{ steps.semantic.outputs.error_message == null }}
         uses: marocchino/sticky-pull-request-comment@v2
         with:
           header: semantic-pr
