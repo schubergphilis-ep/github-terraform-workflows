@@ -4,6 +4,44 @@ on:
   workflow_call:
 
 jobs:
+  generate-docs:
+    name: Generate docs
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+
+      - name: Render terraform docs inside the README.md and push changes back to PR branch
+        uses: terraform-docs/gh-actions@v1.4.1
+        with:
+          args: --sort-by required
+          git-commit-message: "chore(readme): Update module usage"
+          git-push: "true"
+        continue-on-error: true # added this to prevent a PR from a remote fork failing the workflow
+
+  # If the recursive flag is set to true, the action will not update the main README.md file.
+  # Therefore we need to run the action twice, once for the root module and once for the modules directory
+  generate-docs-modules:
+    name: Generate module docs
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+
+      - name: Render terraform docs inside the README.md and push changes back to PR branch
+        uses: terraform-docs/gh-actions@v1.4.1
+        with:
+          args: --sort-by required
+          git-commit-message: "chore(readme): Update module usage"
+          git-push: "true"
+          recursive-path: modules
+          recursive: "true"
+        continue-on-error: true # added this to prevent a PR from a remote fork failing the workflow
+
   lint:
     name: Lint
     runs-on: ubuntu-latest

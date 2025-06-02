@@ -8,11 +8,17 @@ While primarily intended for use within our organization, these workflows are ge
 
 ### 🧪 CI Workflow (`.github/workflows/ci.yaml`)
 
-This workflow runs static analysis and unit tests on Terraform code:
+This workflow runs static analysis, documentation generation, and unit tests on Terraform code:
 
 - ✅ **Lint**
   - Checks Terraform formatting (`terraform fmt`)
   - Runs TFLint (`tflint`)
+- 📄 **Docs**
+  - Uses `terraform-docs` to generate documentation:
+    - Updates the root `README.md` with input/output documentation
+    - Recursively processes the `modules/` directory if present
+    - Automatically pushes changes back to the PR branch (if applicable)
+    - Non-blocking for remote forks via `continue-on-error: true`
 - 🔐 **Policy**
   - Runs Checkov (`checkov`) to validate security and compliance policies
 - 🧪 **Unit Tests**
