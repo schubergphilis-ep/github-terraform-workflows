@@ -19,15 +19,21 @@ jobs:
           args: --sort-by required
         continue-on-error: true # added this to prevent a PR from a remote fork failing the workflow
 
-      - name: Commit changes
-        uses: qoomon/actions--create-commit@v1
-        id: commit
-        with:
-          message: "chore(readme): Update module usage"
-          skip-empty: true
-
-      - name: Push changes back to PR branch
-        run: git push
+      - name: Commit changes via API
+        run: |
+          echo "Committing changes..."
+          FILES_CHANGED=$(git status --porcelain | awk '{print $2}')
+          for file in $FILES_CHANGED; do
+            CONTENT=$(base64 -w 0 $file)
+            FILENAME=$(basename $file)
+            SHA=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" https://api.github.com/repos/${{ github.repository }}/contents/$file?ref=${{ github.event.pull_request.head.ref }} | jq -r .sha)
+            if [ "$SHA" == "null" ]; then
+              SHA=""
+            fi
+            curl -s -X PUT -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+              -d "{\"message\":\"chore(readme): Update module usage\", \"content\":\"$CONTENT\", \"branch\":\"${{ github.event.pull_request.head.ref }}\", \"sha\":\"$SHA\"}" \
+              https://api.github.com/repos/${{ github.repository }}/contents/$file
+          done
 
   # If the recursive flag is set to true, the action will not update the main README.md file.
   # Therefore we need to run the action twice, once for the root module and once for the modules directory
@@ -48,15 +54,21 @@ jobs:
           recursive: "true"
         continue-on-error: true # added this to prevent a PR from a remote fork failing the workflow
 
-      - name: Commit changes
-        uses: qoomon/actions--create-commit@v1
-        id: commit
-        with:
-          message: "chore(readme): Update module usage"
-          skip-empty: true
-
-      - name: Push changes back to PR branch
-        run: git push
+      - name: Commit changes via API
+        run: |
+          echo "Committing changes..."
+          FILES_CHANGED=$(git status --porcelain | awk '{print $2}')
+          for file in $FILES_CHANGED; do
+            CONTENT=$(base64 -w 0 $file)
+            FILENAME=$(basename $file)
+            SHA=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" https://api.github.com/repos/${{ github.repository }}/contents/$file?ref=${{ github.event.pull_request.head.ref }} | jq -r .sha)
+            if [ "$SHA" == "null" ]; then
+              SHA=""
+            fi
+            curl -s -X PUT -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+              -d "{\"message\":\"chore(readme): Update module usage\", \"content\":\"$CONTENT\", \"branch\":\"${{ github.event.pull_request.head.ref }}\", \"sha\":\"$SHA\"}" \
+              https://api.github.com/repos/${{ github.repository }}/contents/$file
+          done
 
   lint:
     name: Lint
