@@ -2,12 +2,6 @@ name: CI
 
 on:
   workflow_call:
-    inputs:
-      token:
-        type: string
-        description: 'A GitHub access token'
-        required: true
-        default: ${{ github.token }}
 
 jobs:
   generate-docs:
@@ -32,11 +26,11 @@ jobs:
           for file in $FILES_CHANGED; do
             CONTENT=$(base64 -w 0 $file)
             FILENAME=$(basename $file)
-            SHA=$(curl -s -H "Authorization: token ${{ inputs.token }}" https://api.github.com/repos/${{ github.repository }}/contents/$file?ref=${{ github.event.pull_request.head.ref }} | jq -r .sha)
+            SHA=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" https://api.github.com/repos/${{ github.repository }}/contents/$file?ref=${{ github.event.pull_request.head.ref }} | jq -r .sha)
             if [ "$SHA" == "null" ]; then
               SHA=""
             fi
-            curl -s -X PUT -H "Authorization: token ${{ inputs.token }}" \
+            curl -s -X PUT -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
               -d "{\"message\":\"chore(readme): Update module usage\", \"content\":\"$CONTENT\", \"branch\":\"${{ github.event.pull_request.head.ref }}\", \"sha\":\"$SHA\"}" \
               https://api.github.com/repos/${{ github.repository }}/contents/$file
           done
@@ -67,11 +61,11 @@ jobs:
           for file in $FILES_CHANGED; do
             CONTENT=$(base64 -w 0 $file)
             FILENAME=$(basename $file)
-            SHA=$(curl -s -H "Authorization: token ${{ inputs.token }}" https://api.github.com/repos/${{ github.repository }}/contents/$file?ref=${{ github.event.pull_request.head.ref }} | jq -r .sha)
+            SHA=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" https://api.github.com/repos/${{ github.repository }}/contents/$file?ref=${{ github.event.pull_request.head.ref }} | jq -r .sha)
             if [ "$SHA" == "null" ]; then
               SHA=""
             fi
-            curl -s -X PUT -H "Authorization: token ${{ inputs.token }}" \
+            curl -s -X PUT -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
               -d "{\"message\":\"chore(readme): Update module usage\", \"content\":\"$CONTENT\", \"branch\":\"${{ github.event.pull_request.head.ref }}\", \"sha\":\"$SHA\"}" \
               https://api.github.com/repos/${{ github.repository }}/contents/$file
           done
