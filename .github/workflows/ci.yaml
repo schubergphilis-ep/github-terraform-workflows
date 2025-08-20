@@ -13,13 +13,21 @@ jobs:
         with:
           ref: ${{ github.event.pull_request.head.ref }}
 
-      - name: Render terraform docs inside the README.md and push changes back to PR branch
+      - name: Render terraform docs inside the README.md
         uses: terraform-docs/gh-actions@v1.4.1
         with:
           args: --sort-by required
-          git-commit-message: "chore(readme): Update module usage"
-          git-push: "true"
         continue-on-error: true # added this to prevent a PR from a remote fork failing the workflow
+
+      - name: Commit changes
+        uses: qoomon/actions--create-commit@v1
+        id: commit
+        with:
+          message: "chore(readme): Update module usage"
+          skip-empty: true
+
+      - name: Push changes back to PR branch
+        run: git push
 
   # If the recursive flag is set to true, the action will not update the main README.md file.
   # Therefore we need to run the action twice, once for the root module and once for the modules directory
@@ -32,15 +40,23 @@ jobs:
         with:
           ref: ${{ github.event.pull_request.head.ref }}
 
-      - name: Render terraform docs inside the README.md and push changes back to PR branch
+      - name: Render terraform docs inside the README.md
         uses: terraform-docs/gh-actions@v1.4.1
         with:
           args: --sort-by required
-          git-commit-message: "chore(readme): Update module usage"
-          git-push: "true"
           recursive-path: modules
           recursive: "true"
         continue-on-error: true # added this to prevent a PR from a remote fork failing the workflow
+
+      - name: Commit changes
+        uses: qoomon/actions--create-commit@v1
+        id: commit
+        with:
+          message: "chore(readme): Update module usage"
+          skip-empty: true
+
+      - name: Push changes back to PR branch
+        run: git push
 
   lint:
     name: Lint
