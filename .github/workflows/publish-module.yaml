@@ -13,7 +13,7 @@ jobs:
 
       - name: Publish module to Terraform Cloud org
         env:
-        #   ORG: ${{ matrix.org }}
+          ORG: sbp-azure-demo
           ORG_TOKEN_NAME: TF_TOKEN_APP_TERRAFORM_IO__SBP_AZURE_DEMO
         #   MODULE: ${{ needs.prepare.outputs.module }}
         #   PROVIDER: ${{ needs.prepare.outputs.provider }}
