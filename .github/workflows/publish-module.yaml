@@ -1,0 +1,39 @@
+name: CI
+
+on:
+  workflow_call:
+
+jobs:
+  list-versions:
+    name: List Versions
+    runs-on: ubuntu-latest
+    steps:
+      # - name: Checkout code
+      #   uses: actions/checkout@v4
+
+      - name: Publish module to Terraform Cloud org
+        env:
+        #   ORG: ${{ matrix.org }}
+          ORG_TOKEN_NAME: TF_TOKEN_APP_TERRAFORM_IO__SBP_AZURE_DEMO
+        #   MODULE: ${{ needs.prepare.outputs.module }}
+        #   PROVIDER: ${{ needs.prepare.outputs.provider }}
+        #   VERSION: ${{ needs.prepare.outputs.version }}
+        #   COMMIT_SHA: ${{ needs.prepare.outputs.commit_sha }}
+        run: |
+          set -euo pipefail
+
+          echo $ORG_TOKEN_NAME
+
+          TOKEN="${{ secrets[env.ORG_TOKEN_NAME] }}"
+
+          if [ -z "$TOKEN" ]; then
+            echo "::error::No token found for $ORG"
+            exit 1
+          fi
+
+          echo "listing modules for $ORG..."
+
+          curl \
+            --request GET \
+            --header "Authorization: Bearer $TOKEN" \
+            https://app.terraform.io/api/v2/organizations/$ORG/registry-modules
