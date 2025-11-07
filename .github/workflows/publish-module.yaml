@@ -22,4 +22,4 @@ jobs:
             -H "Accept: application/vnd.github+json" \
             -H "Authorization: Bearer ${{ steps.login.outputs.token }}" \
             https://api.github.com/repos/schubergphilis-ep/enablement-platform-terraform-module-publishing/dispatches \
-            -d '{"event_type":"publish-module","client_payload":{"repository":"${{ github.repository }}", "version": "${{ github.ref }}"}}'
+            -d '{"event_type":"publish-module","client_payload":{"repository":"${{ github.repository }}", "version": "${{ github.ref_name }}"}}'
