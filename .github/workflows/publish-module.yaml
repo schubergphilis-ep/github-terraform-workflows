@@ -5,6 +5,7 @@ on:
 
 jobs:
   list-versions:
+    environment: Test
     name: List Versions
     runs-on: ubuntu-latest
     steps:
