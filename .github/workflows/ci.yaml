@@ -147,5 +147,5 @@ jobs:
         run: terraform init -backend=false
 
       - name: Run terraform tests
-        if: ${{ hashFiles('test/**') != '' }}
+        if: ${{ hashFiles('test/**', 'tests/**') != '' }}
         run: terraform test
