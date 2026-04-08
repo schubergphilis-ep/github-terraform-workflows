@@ -1,4 +1,4 @@
-name: Module Release
+name: Release Please
 
 on:
   workflow_call:
@@ -20,13 +20,15 @@ on:
 
 jobs:
   release-please:
-    uses: schubergphilis-ep/github-terraform-workflows/.github/workflows/release-please.yaml@main
-    with:
-      config-file: ${{ inputs.config-file }}
-      manifest-file: ${{ inputs.manifest-file }}
+    name: Release Please
+    runs-on: ubuntu-latest
     permissions:
       contents: write
       issues: write
       pull-requests: write
-    secrets:
-      token: ${{ secrets.token }}
+    steps:
+      - uses: googleapis/release-please-action@16a9c90856f42705d54a6fda1823352bdc62cf38 #v4.4.0
+        with:
+          config-file: ${{ inputs.config-file }}
+          manifest-file: ${{ inputs.manifest-file }}
+          token: ${{ secrets.token || secrets.GITHUB_TOKEN }}

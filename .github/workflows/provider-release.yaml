@@ -31,19 +31,17 @@ on:
 
 jobs:
   release-please:
-    name: Release Please
     if: startsWith(github.ref, 'refs/heads/')
-    runs-on: ubuntu-latest
+    uses: schubergphilis-ep/github-terraform-workflows/.github/workflows/release-please.yaml@main
+    with:
+      config-file: ${{ inputs.config-file }}
+      manifest-file: ${{ inputs.manifest-file }}
     permissions:
       contents: write
       issues: write
       pull-requests: write
-    steps:
-      - uses: googleapis/release-please-action@16a9c90856f42705d54a6fda1823352bdc62cf38 #v4.4.0
-        with:
-          config-file: ${{ inputs.config-file }}
-          manifest-file: ${{ inputs.manifest-file }}
-          token: ${{ secrets.token || secrets.GITHUB_TOKEN }}
+    secrets:
+      token: ${{ secrets.token }}
 
   goreleaser:
     name: GoReleaser
