@@ -57,7 +57,7 @@ jobs:
             exit 1
           fi
           GORELEASER_FILE=$(ls .goreleaser.yml .goreleaser.yaml 2>/dev/null | head -1)
-          MODE=$(yq -r '.release.mode // empty' "$GORELEASER_FILE")
+          MODE=$(yq -r '.release.mode' "$GORELEASER_FILE")
           if [ "$MODE" != "append" ]; then
             echo "::error::GoReleaser release.mode must be set to 'append' to coexist with release-please. Found: '${MODE:-<not set>}'."
             exit 1
