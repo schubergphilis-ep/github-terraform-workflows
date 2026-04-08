@@ -1,0 +1,23 @@
+# Example caller workflow for Terraform module CI.
+# Place this in your module repository at .github/workflows/ci.yaml
+
+name: CI
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, edited]
+
+jobs:
+  Commit:
+    uses: schubergphilis-ep/github-terraform-workflows/.github/workflows/commit.yaml@main
+    permissions:
+      contents: read
+      pull-requests: write
+    secrets: inherit
+
+  Terraform:
+    uses: schubergphilis-ep/github-terraform-workflows/.github/workflows/module-ci.yaml@main
+    permissions:
+      contents: write
+      security-events: write
+    secrets: inherit

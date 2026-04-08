@@ -1,0 +1,135 @@
+name: Provider CI
+
+on:
+  workflow_call:
+    inputs:
+      go-version:
+        description: 'Go version to use. If empty, reads from go.mod.'
+        required: false
+        type: string
+        default: ''
+      golangci-lint-version:
+        description: 'golangci-lint version to use'
+        required: false
+        type: string
+        default: 'latest'
+
+jobs:
+  validate:
+    name: Validate provider structure
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 #v6.0.1
+
+      - name: Check repository naming convention
+        run: |
+          REPO_NAME="${{ github.event.repository.name }}"
+          if [[ ! "$REPO_NAME" =~ ^terraform-provider- ]]; then
+            echo "::error::Repository name '$REPO_NAME' does not follow the required 'terraform-provider-{NAME}' naming convention."
+            exit 1
+          fi
+
+      - name: Check terraform-registry-manifest.json exists
+        run: |
+          if [ ! -f terraform-registry-manifest.json ]; then
+            echo "::error::terraform-registry-manifest.json is missing. This file is required for Terraform Registry publishing."
+            exit 1
+          fi
+
+      - name: Validate terraform-registry-manifest.json
+        run: |
+          if ! jq empty terraform-registry-manifest.json 2>/dev/null; then
+            echo "::error::terraform-registry-manifest.json is not valid JSON."
+            exit 1
+          fi
+          # Check required fields
+          PROTOCOL_VERSIONS=$(jq -r '.metadata.protocol_versions // empty' terraform-registry-manifest.json)
+          if [ -z "$PROTOCOL_VERSIONS" ]; then
+            echo "::error::terraform-registry-manifest.json must contain metadata.protocol_versions."
+            exit 1
+          fi
+
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 #v6.0.1
+
+      - name: Set up Go
+        uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff #v5.6.0
+        with:
+          go-version: ${{ inputs.go-version || null }}
+          go-version-file: ${{ inputs.go-version == '' && 'go.mod' || '' }}
+
+      - name: Build
+        run: CGO_ENABLED=0 go build ./...
+
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 #v6.0.1
+
+      - name: Set up Go
+        uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff #v5.6.0
+        with:
+          go-version: ${{ inputs.go-version || null }}
+          go-version-file: ${{ inputs.go-version == '' && 'go.mod' || '' }}
+
+      - name: Test
+        run: go test ./...
+
+  vet:
+    name: Vet
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 #v6.0.1
+
+      - name: Set up Go
+        uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff #v5.6.0
+        with:
+          go-version: ${{ inputs.go-version || null }}
+          go-version-file: ${{ inputs.go-version == '' && 'go.mod' || '' }}
+
+      - name: Vet
+        run: go vet ./...
+
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 #v6.0.1
+
+      - name: Set up Go
+        uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff #v5.6.0
+        with:
+          go-version: ${{ inputs.go-version || null }}
+          go-version-file: ${{ inputs.go-version == '' && 'go.mod' || '' }}
+
+      - name: Run golangci-lint
+        uses: golangci/golangci-lint-action@9fae48acfc02a90574d7c304a1758ef9895495fa #v7.0.1
+        with:
+          version: ${{ inputs.golangci-lint-version }}
+
+  goreleaser-check:
+    name: GoReleaser check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 #v6.0.1
+
+      - name: Set up Go
+        uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff #v5.6.0
+        with:
+          go-version: ${{ inputs.go-version || null }}
+          go-version-file: ${{ inputs.go-version == '' && 'go.mod' || '' }}
+
+      - name: Check GoReleaser config
+        uses: goreleaser/goreleaser-action@e435ccd777264be153ace6237001ef4d979d3a7a #v6.4.0
+        with:
+          args: check

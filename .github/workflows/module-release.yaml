@@ -1,0 +1,34 @@
+name: Module Release
+
+on:
+  workflow_call:
+    inputs:
+      config-file:
+        description: 'Path to release-please config file'
+        required: false
+        type: string
+        default: '.github/release-please-config.json'
+      manifest-file:
+        description: 'Path to release-please manifest file'
+        required: false
+        type: string
+        default: '.github/.release-please-manifest.json'
+    secrets:
+      token:
+        description: 'Token to use instead of GITHUB_TOKEN. A PAT is recommended so that releases created by release-please can trigger downstream workflows.'
+        required: false
+
+jobs:
+  release-please:
+    name: Release Please
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      issues: write
+      pull-requests: write
+    steps:
+      - uses: googleapis/release-please-action@16a9c90856f42705d54a6fda1823352bdc62cf38 #v4.4.0
+        with:
+          config-file: ${{ inputs.config-file }}
+          manifest-file: ${{ inputs.manifest-file }}
+          token: ${{ secrets.token || secrets.GITHUB_TOKEN }}

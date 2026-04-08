@@ -1,0 +1,21 @@
+# Example caller workflow for Terraform module releases.
+# Place this in your module repository at .github/workflows/release.yaml
+#
+# Also requires in your repository:
+# - .github/release-please-config.json (see examples/release-please-config-module.json)
+# - .github/.release-please-manifest.json (initially: { ".": "0.0.0" })
+
+name: Release
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  Release:
+    uses: schubergphilis-ep/github-terraform-workflows/.github/workflows/module-release.yaml@main
+    permissions:
+      contents: write
+      issues: write
+      pull-requests: write
+    secrets: inherit
