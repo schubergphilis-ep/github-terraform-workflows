@@ -15,8 +15,15 @@ on:
         default: '.github/.release-please-manifest.json'
     secrets:
       token:
-        description: 'Token to use instead of GITHUB_TOKEN. A PAT is recommended so that releases created by release-please can trigger downstream workflows.'
+        description: 'Token to use instead of GITHUB_TOKEN'
         required: false
+    outputs:
+      releases_created:
+        description: 'Whether a release was created'
+        value: ${{ jobs.release-please.outputs.releases_created }}
+      tag_name:
+        description: 'The tag name of the created release'
+        value: ${{ jobs.release-please.outputs.tag_name }}
 
 jobs:
   release-please:
@@ -26,8 +33,12 @@ jobs:
       contents: write
       issues: write
       pull-requests: write
+    outputs:
+      releases_created: ${{ steps.release.outputs.releases_created }}
+      tag_name: ${{ steps.release.outputs.tag_name }}
     steps:
       - uses: googleapis/release-please-action@16a9c90856f42705d54a6fda1823352bdc62cf38 #v4.4.0
+        id: release
         with:
           config-file: ${{ inputs.config-file }}
           manifest-file: ${{ inputs.manifest-file }}

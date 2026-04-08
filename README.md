@@ -123,7 +123,7 @@ All six jobs run in parallel.
 Combines [release-please](https://github.com/googleapis/release-please) for versioning with [GoReleaser](https://goreleaser.com/) for building and publishing:
 
 1. **On push to main** — release-please creates/updates a Release PR with a changelog
-2. **On tag push (`v*`)** — GoReleaser builds cross-platform binaries, signs checksums with GPG, and uploads all artifacts to the GitHub Release
+2. **When a Release PR is merged** — release-please creates a tag and GitHub Release, then GoReleaser automatically runs in the same workflow to build cross-platform binaries, sign checksums with GPG, and upload all artifacts to the release
 
 The release includes:
 - Compiled binaries for darwin/linux/windows/freebsd (amd64, arm64, arm, 386)
@@ -138,7 +138,6 @@ The Terraform Registry webhook automatically picks up new releases.
 |---|---|---|
 | `gpg_private_key` | Yes | ASCII-armored GPG private key (RSA or DSA, not ECC) |
 | `gpg_passphrase` | Yes | Passphrase for the GPG key |
-| `token` | Recommended | A PAT so release-please tags trigger the GoReleaser job (tags created by `GITHUB_TOKEN` [do not trigger workflows](https://docs.github.com/en/actions/security-for-github-actions/security-guides/automatic-token-authentication#using-the-github_token-in-a-workflow)) |
 
 ### Provider Setup
 
@@ -210,7 +209,6 @@ name: Release
 on:
   push:
     branches: [main]
-    tags: ['v*']
 
 jobs:
   Release:
@@ -220,7 +218,6 @@ jobs:
       issues: write
       pull-requests: write
     secrets:
-      token: ${{ secrets.EP_GITHUB_TOKEN }}
       gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
       gpg_passphrase: ${{ secrets.GPG_PASSPHRASE }}
 ```

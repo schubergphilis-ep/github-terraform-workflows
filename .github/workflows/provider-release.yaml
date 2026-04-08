@@ -20,7 +20,7 @@ on:
         default: '.github/.release-please-manifest.json'
     secrets:
       token:
-        description: 'A PAT is recommended so that tags created by release-please can trigger the goreleaser job. Falls back to GITHUB_TOKEN.'
+        description: 'Token to use instead of GITHUB_TOKEN'
         required: false
       gpg_private_key:
         description: 'GPG private key (ASCII-armored) for signing release checksums'
@@ -31,7 +31,6 @@ on:
 
 jobs:
   release-please:
-    if: startsWith(github.ref, 'refs/heads/')
     uses: schubergphilis-ep/github-terraform-workflows/.github/workflows/release-please.yaml@main
     with:
       config-file: ${{ inputs.config-file }}
@@ -45,7 +44,8 @@ jobs:
 
   goreleaser:
     name: GoReleaser
-    if: startsWith(github.ref, 'refs/tags/v')
+    needs: release-please
+    if: needs.release-please.outputs.releases_created == 'true'
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -53,6 +53,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 #v6.0.1
         with:
+          ref: ${{ needs.release-please.outputs.tag_name }}
           fetch-depth: 0
 
       - name: Set up Go

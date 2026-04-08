@@ -10,17 +10,12 @@
 # Required secrets:
 # - GPG_PRIVATE_KEY: ASCII-armored GPG private key for signing checksums
 # - GPG_PASSPHRASE: Passphrase for the GPG key
-#
-# Recommended secrets:
-# - EP_GITHUB_TOKEN: A PAT so that tags created by release-please trigger the goreleaser job
-#   (tags created by GITHUB_TOKEN do not trigger workflows)
 
 name: Release
 
 on:
   push:
     branches: [main]
-    tags: ['v*']
 
 jobs:
   Release:
@@ -30,6 +25,5 @@ jobs:
       issues: write
       pull-requests: write
     secrets:
-      token: ${{ secrets.EP_GITHUB_TOKEN }}
       gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
       gpg_passphrase: ${{ secrets.GPG_PASSPHRASE }}
