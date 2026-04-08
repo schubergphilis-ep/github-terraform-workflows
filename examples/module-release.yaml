@@ -13,7 +13,7 @@ on:
 
 jobs:
   Release:
-    uses: schubergphilis-ep/github-terraform-workflows/.github/workflows/module-release.yaml@main
+    uses: schubergphilis-ep/github-terraform-workflows/.github/workflows/module-release.yaml@v1.0.0 # v1.0.0 - abc1234
     permissions:
       contents: write
       issues: write

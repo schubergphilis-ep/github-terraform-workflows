@@ -9,14 +9,14 @@ on:
 
 jobs:
   Commit:
-    uses: schubergphilis-ep/github-terraform-workflows/.github/workflows/commit.yaml@main
+    uses: schubergphilis-ep/github-terraform-workflows/.github/workflows/commit.yaml@v1.0.0 # v1.0.0 - abc1234
     permissions:
       contents: read
       pull-requests: write
     secrets: inherit
 
   Terraform:
-    uses: schubergphilis-ep/github-terraform-workflows/.github/workflows/module-ci.yaml@main
+    uses: schubergphilis-ep/github-terraform-workflows/.github/workflows/module-ci.yaml@v1.0.0 # v1.0.0 - abc1234
     permissions:
       contents: write
       security-events: write
