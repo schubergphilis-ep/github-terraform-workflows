@@ -1,0 +1,84 @@
+name: Provider Release
+
+on:
+  workflow_call:
+    inputs:
+      go-version:
+        description: 'Go version to use. If empty, reads from go.mod.'
+        required: false
+        type: string
+        default: ''
+      config-file:
+        description: 'Path to release-please config file'
+        required: false
+        type: string
+        default: '.github/release-please-config.json'
+      manifest-file:
+        description: 'Path to release-please manifest file'
+        required: false
+        type: string
+        default: '.github/.release-please-manifest.json'
+    secrets:
+      token:
+        description: 'Token to use instead of GITHUB_TOKEN'
+        required: false
+      gpg_private_key:
+        description: 'GPG private key (ASCII-armored) for signing release checksums'
+        required: true
+      gpg_passphrase:
+        description: 'Passphrase for the GPG private key'
+        required: true
+
+jobs:
+  release-please:
+    name: Release Please
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      issues: write
+      pull-requests: write
+    outputs:
+      releases_created: ${{ steps.release.outputs.releases_created }}
+      tag_name: ${{ steps.release.outputs.tag_name }}
+    steps:
+      - uses: googleapis/release-please-action@16a9c90856f42705d54a6fda1823352bdc62cf38 #v4.4.0
+        id: release
+        with:
+          config-file: ${{ inputs.config-file }}
+          manifest-file: ${{ inputs.manifest-file }}
+          token: ${{ secrets.token || secrets.GITHUB_TOKEN }}
+
+  goreleaser:
+    name: GoReleaser
+    needs: release-please
+    if: needs.release-please.outputs.releases_created == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 #v6.0.1
+        with:
+          ref: ${{ needs.release-please.outputs.tag_name }}
+          fetch-depth: 0
+
+      - name: Set up Go
+        uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff #v5.6.0
+        with:
+          go-version: ${{ inputs.go-version || null }}
+          go-version-file: ${{ inputs.go-version == '' && 'go.mod' || '' }}
+
+      - name: Import GPG key
+        uses: crazy-max/ghaction-import-gpg@e89d40939c28e39f97cf32126055eeae86ba74ec #v6.3.0
+        id: import_gpg
+        with:
+          gpg_private_key: ${{ secrets.gpg_private_key }}
+          passphrase: ${{ secrets.gpg_passphrase }}
+
+      - name: Run GoReleaser
+        uses: goreleaser/goreleaser-action@e435ccd777264be153ace6237001ef4d979d3a7a #v6.4.0
+        with:
+          args: release --clean
+        env:
+          GITHUB_TOKEN: ${{ secrets.token || secrets.GITHUB_TOKEN }}
+          GPG_FINGERPRINT: ${{ steps.import_gpg.outputs.fingerprint }}

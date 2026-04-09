@@ -1,0 +1,29 @@
+# Example caller workflow for Terraform provider releases.
+# Place this in your provider repository at .github/workflows/release.yaml
+#
+# Also requires in your repository:
+# - .goreleaser.yml (see examples/.goreleaser.yml)
+# - terraform-registry-manifest.json
+# - .github/release-please-config.json (see examples/release-please-config-provider.json)
+# - .github/.release-please-manifest.json (initially: { ".": "0.0.0" })
+#
+# Required secrets:
+# - GPG_PRIVATE_KEY: ASCII-armored GPG private key for signing checksums
+# - GPG_PASSPHRASE: Passphrase for the GPG key
+
+name: Release
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  Release:
+    uses: schubergphilis-ep/github-terraform-workflows/.github/workflows/provider-release.yaml@v1.0.0 # v1.0.0 - abc1234
+    permissions:
+      contents: write
+      issues: write
+      pull-requests: write
+    secrets:
+      gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
+      gpg_passphrase: ${{ secrets.GPG_PASSPHRASE }}
