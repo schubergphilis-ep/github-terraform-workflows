@@ -103,6 +103,11 @@ jobs:
           tflint --init
           tflint
 
+          for d in examples/*/; do
+            tflint --chdir="$d" --init
+            tflint --chdir="$d"
+          done
+
   policy:
     name: Policy
 
