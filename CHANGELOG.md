@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.1.0](https://github.com/schubergphilis-ep/github-terraform-workflows/compare/v2.0.0...v2.1.0) (2026-05-11)
+
+
+### Features
+
+* run tflint in examples ([#12](https://github.com/schubergphilis-ep/github-terraform-workflows/issues/12)) ([245666b](https://github.com/schubergphilis-ep/github-terraform-workflows/commit/245666b07440ef62b6b0ff1e81baa20a59e864ba))
+
 ## [2.0.0](https://github.com/schubergphilis-ep/github-terraform-workflows/compare/v1.1.0...v2.0.0) (2026-04-09)
 
 
