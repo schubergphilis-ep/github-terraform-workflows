@@ -103,10 +103,14 @@ jobs:
           tflint --init
           tflint
 
-          for d in examples/*/; do
-            tflint --chdir="$d" --init
-            tflint --chdir="$d"
-          done
+          if [ -d examples ]; then
+            # nullglob so an empty examples/ doesn't pass the literal pattern to tflint
+            shopt -s nullglob
+            for d in examples/*/; do
+              tflint --chdir="$d" --init
+              tflint --chdir="$d"
+            done
+          fi
 
   policy:
     name: Policy
