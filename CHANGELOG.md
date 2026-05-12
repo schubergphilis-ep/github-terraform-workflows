@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.1.1](https://github.com/schubergphilis-ep/github-terraform-workflows/compare/v2.1.0...v2.1.1) (2026-05-12)
+
+
+### Fixes
+
+* guard tflint examples loop against missing or empty examples dir ([#14](https://github.com/schubergphilis-ep/github-terraform-workflows/issues/14)) ([6bfff9c](https://github.com/schubergphilis-ep/github-terraform-workflows/commit/6bfff9ca6ceffbfef9d5ba0dd4e453a46c78a557))
+
 ## [2.1.0](https://github.com/schubergphilis-ep/github-terraform-workflows/compare/v2.0.0...v2.1.0) (2026-05-11)
 
 
