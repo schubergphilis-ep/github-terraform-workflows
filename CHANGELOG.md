@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.1.2](https://github.com/schubergphilis-ep/github-terraform-workflows/compare/v2.1.1...v2.1.2) (2026-05-29)
+
+
+### Fixes
+
+* bump actions to use node24 ([#16](https://github.com/schubergphilis-ep/github-terraform-workflows/issues/16)) ([efc0729](https://github.com/schubergphilis-ep/github-terraform-workflows/commit/efc0729b093efb1f0e0aab81b0983f6f158292c4))
+
 ## [2.1.1](https://github.com/schubergphilis-ep/github-terraform-workflows/compare/v2.1.0...v2.1.1) (2026-05-12)
 
 
