@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.1.3](https://github.com/schubergphilis-ep/github-terraform-workflows/compare/v2.1.2...v2.1.3) (2026-07-16)
+
+
+### Fixes
+
+* juli 2026: bump all versions ([#18](https://github.com/schubergphilis-ep/github-terraform-workflows/issues/18)) ([5268081](https://github.com/schubergphilis-ep/github-terraform-workflows/commit/5268081ce3a5b7cef276c73c038b1f4f3c7c1e6c))
+
 ## [2.1.2](https://github.com/schubergphilis-ep/github-terraform-workflows/compare/v2.1.1...v2.1.2) (2026-05-29)
 
 
