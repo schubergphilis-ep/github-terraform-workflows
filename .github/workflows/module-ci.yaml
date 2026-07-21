@@ -7,10 +7,21 @@ on:
         description: 'Token to use instead of GITHUB_TOKEN'
         required: false
         type: string
+      generate_docs:
+        description: 'Whether to run the generate-docs job'
+        required: false
+        type: boolean
+        default: true
+      generate_docs_modules:
+        description: 'Whether to run the generate-docs-modules job'
+        required: false
+        type: boolean
+        default: true
 
 jobs:
   generate-docs:
     name: Generate docs
+    if: ${{ inputs.generate_docs }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -46,6 +57,7 @@ jobs:
   # Therefore we need to run the action twice, once for the root module and once for the modules directory
   generate-docs-modules:
     name: Generate module docs
+    if: ${{ inputs.generate_docs_modules }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
