@@ -14,14 +14,13 @@ on:
         required: false
         type: string
         default: ''
+    secrets:
       tf_registry_token:
         description: >-
           Token used to authenticate against tf_registry_host, exposed to the lint, validate, and
           test jobs as TF_TOKEN_<tf_registry_host, with . and - replaced per Terraform's CLI config
           convention>.
         required: false
-        type: string
-        default: ''
 
 jobs:
   generate-docs:
@@ -102,7 +101,7 @@ jobs:
         if: inputs.tf_registry_host != ''
         env:
           TF_REGISTRY_HOST: ${{ inputs.tf_registry_host }}
-          TF_REGISTRY_TOKEN: ${{ inputs.tf_registry_token }}
+          TF_REGISTRY_TOKEN: ${{ secrets.tf_registry_token }}
         run: |
           var_name="TF_TOKEN_$(echo "$TF_REGISTRY_HOST" | sed -e 's/-/__/g' -e 's/\./_/g')"
           {
@@ -148,7 +147,7 @@ jobs:
         if: inputs.tf_registry_host != ''
         env:
           TF_REGISTRY_HOST: ${{ inputs.tf_registry_host }}
-          TF_REGISTRY_TOKEN: ${{ inputs.tf_registry_token }}
+          TF_REGISTRY_TOKEN: ${{ secrets.tf_registry_token }}
         run: |
           var_name="TF_TOKEN_$(echo "$TF_REGISTRY_HOST" | sed -e 's/-/__/g' -e 's/\./_/g')"
           {
@@ -213,7 +212,7 @@ jobs:
         if: inputs.tf_registry_host != ''
         env:
           TF_REGISTRY_HOST: ${{ inputs.tf_registry_host }}
-          TF_REGISTRY_TOKEN: ${{ inputs.tf_registry_token }}
+          TF_REGISTRY_TOKEN: ${{ secrets.tf_registry_token }}
         run: |
           var_name="TF_TOKEN_$(echo "$TF_REGISTRY_HOST" | sed -e 's/-/__/g' -e 's/\./_/g')"
           {

@@ -28,21 +28,21 @@ Runs static analysis, documentation generation, and unit tests on Terraform code
 - **Policy** — Runs Checkov for security and compliance checks
 - **Unit Tests** — Runs `terraform test` if files exist under `test/` or `tests/`
 
-The **Lint**, **Validate**, and **Unit Tests** jobs run `terraform init`. If your module pulls private modules from a Terraform Cloud/Enterprise registry during init, pass the registry hostname and a token via the `tf_registry_host` / `tf_registry_token` inputs — this workflow has no built-in knowledge of any specific registry or secret name, so it's entirely up to the caller to supply them (always sourced from `secrets.*`, never hardcoded):
+The **Lint**, **Validate**, and **Unit Tests** jobs run `terraform init`. If your module pulls private modules from a Terraform Cloud/Enterprise registry during init, pass the registry hostname via the `tf_registry_host` input and the token via the `tf_registry_token` secret — this workflow has no built-in knowledge of any specific registry or secret name, so it's entirely up to the caller to supply them. Note that `tf_registry_token` is passed through the job's `secrets:` keyword, not `with:` (GitHub Actions does not allow the `secrets` context inside `with:`), which also means this job can no longer use `secrets: inherit` and must pass secrets explicitly:
 
 ```yaml
 Terraform:
   uses: schubergphilis-ep/github-terraform-workflows/.github/workflows/module-ci.yaml@main
   with:
     tf_registry_host: app.terraform.io
-    tf_registry_token: ${{ secrets.YOUR_TF_TOKEN_SECRET }}
   permissions:
     contents: write
     security-events: write
-  secrets: inherit
+  secrets:
+    tf_registry_token: ${{ secrets.YOUR_TF_TOKEN_SECRET }}
 ```
 
-Both inputs default to an empty string and are skipped when `tf_registry_host` isn't set.
+Both default to an empty string and are skipped when `tf_registry_host` isn't set.
 
 **Inputs:**
 
@@ -50,7 +50,12 @@ Both inputs default to an empty string and are skipped when `tf_registry_host` i
 |---|---|---|
 | `token` | _(GITHUB_TOKEN)_ | Token used to commit generated docs, instead of `GITHUB_TOKEN` |
 | `tf_registry_host` | `''` | Hostname of a private Terraform module registry (e.g. `app.terraform.io`) |
-| `tf_registry_token` | `''` | Token for `tf_registry_host`, exposed to the lint/validate/test jobs as `TF_TOKEN_<host>` |
+
+**Secrets:**
+
+| Secret | Required | Description |
+|---|---|---|
+| `tf_registry_token` | No | Token for `tf_registry_host`, exposed to the lint/validate/test jobs as `TF_TOKEN_<host>` |
 
 ### Module Release (`module-release.yaml`)
 
