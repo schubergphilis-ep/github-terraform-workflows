@@ -24,10 +24,11 @@ Runs static analysis, documentation generation, and unit tests on Terraform code
 
 - **Lint** — Checks formatting (`terraform fmt`) and runs TFLint
 - **Docs** — Generates documentation into `README.md` using `terraform-docs` (root + `modules/` subdirectory)
+- **Validate** — Runs `terraform validate` against each directory under `examples/`, if the module has one
 - **Policy** — Runs Checkov for security and compliance checks
 - **Unit Tests** — Runs `terraform test` if files exist under `test/` or `tests/`
 
-The **Lint** and **Unit Tests** jobs run `terraform init` and set `TF_TOKEN_app_terraform_io` from the `INCEPTION_TF_TOKEN_READ_SCHUBERG_PHILIS_EP` organization secret, so private modules hosted on the Terraform Cloud/Enterprise registry can be pulled during init.
+The **Lint**, **Validate**, and **Unit Tests** jobs run `terraform init` and set `TF_TOKEN_app_terraform_io` from the `INCEPTION_TF_TOKEN_READ_SCHUBERG_PHILIS_EP` organization secret, so private modules hosted on the Terraform Cloud/Enterprise registry can be pulled during init.
 
 ### Module Release (`module-release.yaml`)
 
