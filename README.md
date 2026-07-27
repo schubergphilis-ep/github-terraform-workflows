@@ -27,7 +27,7 @@ Runs static analysis, documentation generation, and unit tests on Terraform code
 - **Policy** — Runs Checkov for security and compliance checks
 - **Unit Tests** — Runs `terraform test` if files exist under `test/` or `tests/`
 
-The **Lint** and **Unit Tests** jobs run `terraform init` and set `TF_TOKEN_app_terraform_io` from the `INCEPTION_TF_TOKEN_READ_SCHUBERG_PHILIS_EP` organization secret, so private modules hosted on the Terraform Cloud/Enterprise registry can be pulled during init. This requires the caller workflow to use `secrets: inherit`.
+The **Lint** and **Unit Tests** jobs run `terraform init` and set `TF_TOKEN_app_terraform_io` from the `INCEPTION_TF_TOKEN_READ_SCHUBERG_PHILIS_EP` organization secret, so private modules hosted on the Terraform Cloud/Enterprise registry can be pulled during init.
 
 ### Module Release (`module-release.yaml`)
 
