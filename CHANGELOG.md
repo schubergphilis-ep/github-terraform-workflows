@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.2.0](https://github.com/schubergphilis-ep/github-terraform-workflows/compare/v2.1.3...v2.2.0) (2026-07-27)
+
+
+### Features
+
+* set TF_TOKEN_app_terraform_io to pull any nested private modules ([#21](https://github.com/schubergphilis-ep/github-terraform-workflows/issues/21)) ([ec9d9bf](https://github.com/schubergphilis-ep/github-terraform-workflows/commit/ec9d9bf354ea1e224440c2c1fcb243f237ae5d13))
+
 ## [2.1.3](https://github.com/schubergphilis-ep/github-terraform-workflows/compare/v2.1.2...v2.1.3) (2026-07-16)
 
 
