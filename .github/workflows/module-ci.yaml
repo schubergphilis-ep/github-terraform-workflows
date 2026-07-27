@@ -18,8 +18,8 @@ on:
       tf_registry_token:
         description: >-
           Token used to authenticate against tf_registry_host, exposed to the lint, validate, and
-          test jobs as TF_TOKEN_<tf_registry_host, with . and - replaced per Terraform's CLI config
-          convention>.
+          test jobs as TF_TOKEN_<tf_registry_host> (with . and - in the host replaced per Terraform's CLI
+          config convention).
         required: false
 
 jobs:
