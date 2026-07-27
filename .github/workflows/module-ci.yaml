@@ -82,6 +82,8 @@ jobs:
   lint:
     name: Lint
     runs-on: ubuntu-latest
+    env:
+      TF_TOKEN_app_terraform_io: ${{ secrets.INCEPTION_TF_TOKEN_READ_SCHUBERG_PHILIS_EP }}
     steps:
       - name: Checkout
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 #v7.0.0
@@ -146,6 +148,8 @@ jobs:
   test:
     name: Unit tests
     runs-on: ubuntu-latest
+    env:
+      TF_TOKEN_app_terraform_io: ${{ secrets.INCEPTION_TF_TOKEN_READ_SCHUBERG_PHILIS_EP }}
     steps:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 #v7.0.0
 
