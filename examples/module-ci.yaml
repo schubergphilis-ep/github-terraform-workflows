@@ -20,4 +20,8 @@ jobs:
     permissions:
       contents: write
       security-events: write
+    # Uncomment to authenticate against a private Terraform module registry during init:
+    # with:
+    #   tf_registry_host: app.terraform.io
+    #   tf_registry_token: ${{ secrets.YOUR_TF_TOKEN_SECRET }}
     secrets: inherit
