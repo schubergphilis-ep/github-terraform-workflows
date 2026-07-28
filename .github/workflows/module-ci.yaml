@@ -7,6 +7,20 @@ on:
         description: 'Token to use instead of GITHUB_TOKEN'
         required: false
         type: string
+      tf_registry_host:
+        description: >-
+          Hostname of a private Terraform module registry (e.g. app.terraform.io) to authenticate
+          against in the lint, validate, and test jobs. Leave empty to skip.
+        required: false
+        type: string
+        default: ''
+    secrets:
+      tf_registry_token:
+        description: >-
+          Token used to authenticate against tf_registry_host, exposed to the lint, validate, and
+          test jobs as TF_TOKEN_<tf_registry_host> (with . and - in the host replaced per Terraform's CLI
+          config convention).
+        required: false
 
 jobs:
   generate-docs:
@@ -82,9 +96,20 @@ jobs:
   lint:
     name: Lint
     runs-on: ubuntu-latest
-    env:
-      TF_TOKEN_app_terraform_io: ${{ secrets.INCEPTION_TF_TOKEN_READ_SCHUBERG_PHILIS_EP }}
     steps:
+      - name: Set Terraform registry credentials
+        if: inputs.tf_registry_host != ''
+        env:
+          TF_REGISTRY_HOST: ${{ inputs.tf_registry_host }}
+          TF_REGISTRY_TOKEN: ${{ secrets.tf_registry_token }}
+        run: |
+          var_name="TF_TOKEN_$(echo "$TF_REGISTRY_HOST" | sed -e 's/-/__/g' -e 's/\./_/g')"
+          {
+            echo "${var_name}<<__TF_REGISTRY_TOKEN_EOF__"
+            echo "$TF_REGISTRY_TOKEN"
+            echo "__TF_REGISTRY_TOKEN_EOF__"
+          } >> "$GITHUB_ENV"
+
       - name: Checkout
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 #v7.0.0
 
@@ -117,9 +142,20 @@ jobs:
   validate:
     name: Validate examples
     runs-on: ubuntu-latest
-    env:
-      TF_TOKEN_app_terraform_io: ${{ secrets.INCEPTION_TF_TOKEN_READ_SCHUBERG_PHILIS_EP }}
     steps:
+      - name: Set Terraform registry credentials
+        if: inputs.tf_registry_host != ''
+        env:
+          TF_REGISTRY_HOST: ${{ inputs.tf_registry_host }}
+          TF_REGISTRY_TOKEN: ${{ secrets.tf_registry_token }}
+        run: |
+          var_name="TF_TOKEN_$(echo "$TF_REGISTRY_HOST" | sed -e 's/-/__/g' -e 's/\./_/g')"
+          {
+            echo "${var_name}<<__TF_REGISTRY_TOKEN_EOF__"
+            echo "$TF_REGISTRY_TOKEN"
+            echo "__TF_REGISTRY_TOKEN_EOF__"
+          } >> "$GITHUB_ENV"
+
       - name: Checkout
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 #v7.0.0
 
@@ -171,9 +207,20 @@ jobs:
   test:
     name: Unit tests
     runs-on: ubuntu-latest
-    env:
-      TF_TOKEN_app_terraform_io: ${{ secrets.INCEPTION_TF_TOKEN_READ_SCHUBERG_PHILIS_EP }}
     steps:
+      - name: Set Terraform registry credentials
+        if: inputs.tf_registry_host != ''
+        env:
+          TF_REGISTRY_HOST: ${{ inputs.tf_registry_host }}
+          TF_REGISTRY_TOKEN: ${{ secrets.tf_registry_token }}
+        run: |
+          var_name="TF_TOKEN_$(echo "$TF_REGISTRY_HOST" | sed -e 's/-/__/g' -e 's/\./_/g')"
+          {
+            echo "${var_name}<<__TF_REGISTRY_TOKEN_EOF__"
+            echo "$TF_REGISTRY_TOKEN"
+            echo "__TF_REGISTRY_TOKEN_EOF__"
+          } >> "$GITHUB_ENV"
+
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 #v7.0.0
 
       - name: Setup Terraform

@@ -21,3 +21,9 @@ jobs:
       contents: write
       security-events: write
     secrets: inherit
+    # To authenticate against a private Terraform module registry during init, replace the
+    # `secrets: inherit` line above with:
+    # with:
+    #   tf_registry_host: app.terraform.io
+    # secrets:
+    #   tf_registry_token: ${{ secrets.YOUR_TF_TOKEN_SECRET }}
