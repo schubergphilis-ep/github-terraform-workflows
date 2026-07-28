@@ -1,5 +1,17 @@
 # Changelog
 
+## [2.3.0](https://github.com/schubergphilis-ep/github-terraform-workflows/compare/v2.2.0...v2.3.0) (2026-07-28)
+
+
+### Features
+
+* add terraform validate step against examples ([#23](https://github.com/schubergphilis-ep/github-terraform-workflows/issues/23)) ([08dd29d](https://github.com/schubergphilis-ep/github-terraform-workflows/commit/08dd29da3868da8805b0242337b9e7df38eae56a))
+
+
+### Fixes
+
+* allow more generic passing of tf token ([#25](https://github.com/schubergphilis-ep/github-terraform-workflows/issues/25)) ([c450cbc](https://github.com/schubergphilis-ep/github-terraform-workflows/commit/c450cbce76033d55201191f6514bedf88cd41ab0))
+
 ## [2.2.0](https://github.com/schubergphilis-ep/github-terraform-workflows/compare/v2.1.3...v2.2.0) (2026-07-27)
 
 
