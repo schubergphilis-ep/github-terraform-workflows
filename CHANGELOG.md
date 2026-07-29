@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.3.1](https://github.com/schubergphilis-ep/github-terraform-workflows/compare/v2.3.0...v2.3.1) (2026-07-29)
+
+
+### Fixes
+
+* skip tests in addition to examples, this is to skip .tf files that might exist in tests ([#26](https://github.com/schubergphilis-ep/github-terraform-workflows/issues/26)) ([290f356](https://github.com/schubergphilis-ep/github-terraform-workflows/commit/290f356495f1e40e10e87158327df897293d8af7))
+
 ## [2.3.0](https://github.com/schubergphilis-ep/github-terraform-workflows/compare/v2.2.0...v2.3.0) (2026-07-28)
 
 
