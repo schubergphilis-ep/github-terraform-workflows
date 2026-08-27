@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.3.2](https://github.com/schubergphilis-ep/github-terraform-workflows/compare/v2.3.1...v2.3.2) (2026-08-27)
+
+
+### Fixes
+
+* pass files/content via raw files to handle large files that would otherwise go over OS's ARG_MAX ([#28](https://github.com/schubergphilis-ep/github-terraform-workflows/issues/28)) ([68c3917](https://github.com/schubergphilis-ep/github-terraform-workflows/commit/68c39172977d87d24d17b025c00fa33e04ff69ae))
+
 ## [2.3.1](https://github.com/schubergphilis-ep/github-terraform-workflows/compare/v2.3.0...v2.3.1) (2026-07-29)
 
 
