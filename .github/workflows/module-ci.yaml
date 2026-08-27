@@ -43,18 +43,26 @@ jobs:
           echo "Committing changes..."
           FILES_CHANGED=$(git status --porcelain | awk '{print $2}')
           for file in $FILES_CHANGED; do
-            CONTENT=$(base64 -w 0 $file)
+            CONTENT_FILE=$(mktemp)
+            base64 -w 0 "$file" > "$CONTENT_FILE"
             FILENAME=$(basename $file)
-            SHA=$(curl -s -H "Authorization: token $TOKEN" https://api.github.com/repos/${{ github.repository }}/contents/$file?ref=${{ github.event.pull_request.head.ref }} | jq -r .sha)
+            SHA=$(curl -s -H "Authorization: token $TOKEN" https://api.github.com/repos/${{ github.repository }}/contents/$file?ref=$BRANCH | jq -r .sha)
             if [ "$SHA" == "null" ]; then
               SHA=""
             fi
-            curl -s -X PUT -H "Authorization: token $TOKEN" \
-              -d "{\"message\":\"chore(readme): Update module usage\", \"content\":\"$CONTENT\", \"branch\":\"${{ github.event.pull_request.head.ref }}\", \"sha\":\"$SHA\"}" \
-              https://api.github.com/repos/${{ github.repository }}/contents/$file
+            jq -n --arg message "chore(readme): Update module usage" \
+              --rawfile content "$CONTENT_FILE" \
+              --arg branch "$BRANCH" \
+              --arg sha "$SHA" \
+              '{message: $message, content: $content, branch: $branch, sha: $sha}' |
+              curl -s -X PUT -H "Authorization: token $TOKEN" \
+                --data-binary @- \
+                https://api.github.com/repos/${{ github.repository }}/contents/$file
+            rm -f "$CONTENT_FILE"
           done
         env:
           TOKEN: ${{ inputs.token || secrets.GITHUB_TOKEN }}
+          BRANCH: ${{ github.event.pull_request.head.ref }}
 
   # If the recursive flag is set to true, the action will not update the main README.md file.
   # Therefore we need to run the action twice, once for the root module and once for the modules directory
@@ -80,18 +88,26 @@ jobs:
           echo "Committing changes..."
           FILES_CHANGED=$(git status --porcelain | awk '{print $2}')
           for file in $FILES_CHANGED; do
-            CONTENT=$(base64 -w 0 $file)
+            CONTENT_FILE=$(mktemp)
+            base64 -w 0 "$file" > "$CONTENT_FILE"
             FILENAME=$(basename $file)
-            SHA=$(curl -s -H "Authorization: token $TOKEN" https://api.github.com/repos/${{ github.repository }}/contents/$file?ref=${{ github.event.pull_request.head.ref }} | jq -r .sha)
+            SHA=$(curl -s -H "Authorization: token $TOKEN" https://api.github.com/repos/${{ github.repository }}/contents/$file?ref=$BRANCH | jq -r .sha)
             if [ "$SHA" == "null" ]; then
               SHA=""
             fi
-            curl -s -X PUT -H "Authorization: token $TOKEN" \
-              -d "{\"message\":\"chore(readme): Update module usage\", \"content\":\"$CONTENT\", \"branch\":\"${{ github.event.pull_request.head.ref }}\", \"sha\":\"$SHA\"}" \
-              https://api.github.com/repos/${{ github.repository }}/contents/$file
+            jq -n --arg message "chore(readme): Update module usage" \
+              --rawfile content "$CONTENT_FILE" \
+              --arg branch "$BRANCH" \
+              --arg sha "$SHA" \
+              '{message: $message, content: $content, branch: $branch, sha: $sha}' |
+              curl -s -X PUT -H "Authorization: token $TOKEN" \
+                --data-binary @- \
+                https://api.github.com/repos/${{ github.repository }}/contents/$file
+            rm -f "$CONTENT_FILE"
           done
         env:
           TOKEN: ${{ inputs.token || secrets.GITHUB_TOKEN }}
+          BRANCH: ${{ github.event.pull_request.head.ref }}
 
   lint:
     name: Lint
