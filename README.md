@@ -44,12 +44,27 @@ Terraform:
 
 Both default to an empty string and are skipped when `tf_registry_host` isn't set.
 
+The **Generate docs** jobs render with terraform-docs' default `markdown table` formatter. A
+repository that wants a different formatter or settings (for example `markdown document`, which
+emits plain Markdown without `<pre>`/`<br/>`/anchor HTML in table cells, and therefore converts
+cleanly to Confluence and other non-GitHub renderers) commits a `.terraform-docs.yml` and passes
+its name:
+
+```yaml
+  with:
+    tf_docs_config_file: .terraform-docs.yml
+```
+
+The file's `formatter`, `settings` and `sort` apply; leave `output` out of it, the jobs keep
+injecting into `README.md` between the standard markers. `--sort-by required` is still passed.
+
 **Inputs:**
 
 | Input | Default | Description |
 |---|---|---|
 | `token` | _(GITHUB_TOKEN)_ | Token used to commit generated docs, instead of `GITHUB_TOKEN` |
 | `tf_registry_host` | `''` | Hostname of a private Terraform module registry (e.g. `app.terraform.io`) |
+| `tf_docs_config_file` | `''` | Name of a terraform-docs config file in the module repository (e.g. `.terraform-docs.yml`). When set, the docs jobs render with its formatter and settings instead of the default `markdown table`. |
 
 **Secrets:**
 

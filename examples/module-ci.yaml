@@ -25,5 +25,6 @@ jobs:
     # `secrets: inherit` line above with:
     # with:
     #   tf_registry_host: app.terraform.io
+    #   tf_docs_config_file: .terraform-docs.yml   # render docs with the repo's own terraform-docs config
     # secrets:
     #   tf_registry_token: ${{ secrets.YOUR_TF_TOKEN_SECRET }}
