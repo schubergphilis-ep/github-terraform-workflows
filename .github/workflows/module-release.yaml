@@ -45,7 +45,7 @@ jobs:
   sbom:
     name: SBOM
     needs: release-please
-    if: inputs.sbom && needs.release-please.outputs.releases_created == 'true'
+    if: inputs.sbom && needs.release-please.outputs.releases_created == 'true' && needs.release-please.outputs.tag_name != ''
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -85,12 +85,12 @@ jobs:
                   ref = f"action:{action}@{sha}"
                   components[ref] = {"type": "application", "bom-ref": ref, "group": action.split("/")[0],
                                      "name": action.split("/")[1], "version": pin or sha,
-                                     "purl": f"pkg:github/{action}@{sha}"}
+                                     "purl": f"pkg:github/{action}@{sha}", "scope": "excluded"}
           bom = {"bomFormat": "CycloneDX", "specVersion": "1.5", "version": 1,
                  "metadata": {"component": {"type": "library", "bom-ref": repo, "group": owner, "name": name,
                                             "version": tag.removeprefix("v"), "purl": f"pkg:github/{repo}@{tag}"}},
                  "components": sorted(components.values(), key=lambda c: c["bom-ref"]),
-                 "dependencies": [{"ref": repo, "dependsOn": sorted(components)}]}
+                 "dependencies": [{"ref": repo, "dependsOn": sorted(r for r in components if r.startswith("provider:"))}]}
           with open("sbom.cdx.json", "w") as f:
               json.dump(bom, f, indent=1)
               f.write("\n")
@@ -101,6 +101,6 @@ jobs:
       - name: Upload SBOM to release
         if: steps.generate.outputs.created == 'true'
         env:
-          GH_TOKEN: ${{ secrets.token || secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TAG: ${{ needs.release-please.outputs.tag_name }}
         run: gh release upload "$TAG" sbom.cdx.json --clobber --repo "$GITHUB_REPOSITORY"

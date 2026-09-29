@@ -66,7 +66,7 @@ Automates versioning and releases using [release-please](https://github.com/goog
 - Uses `release-type: terraform-module`
 - Optionally (`sbom: true`) attaches a CycloneDX 1.5 SBOM, `sbom.cdx.json`, to each release it creates
 
-The SBOM lists every provider in the tracked `.terraform.lock.hcl` (version and all `zh:` SHA-256 package hashes) and every action pinned by SHA in `.github/workflows/`, with the module itself, at the release version, as the metadata component. Output is deterministic (no timestamps). If no `.terraform.lock.hcl` is tracked the step is skipped with a notice.
+The SBOM lists every provider in the tracked `.terraform.lock.hcl` (version and all `zh:` SHA-256 package hashes) and every action pinned by SHA in `.github/workflows/` (with `"scope": "excluded"` and outside the module's dependency list, because CI tooling is not a module dependency), with the module itself, at the release version, as the metadata component. Output is deterministic (no timestamps). If no `.terraform.lock.hcl` is tracked the step is skipped with a notice.
 
 **Inputs:**
 
