@@ -242,9 +242,25 @@ jobs:
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@dfe3c3f87815947d99a8997f908cb6525fc44e9e #v4.0.1
 
-      - name: Init Terraform
-        run: terraform init -backend=false
-
       - name: Run terraform tests
         if: ${{ hashFiles('test/**', 'tests/**') != '' }}
-        run: terraform test
+        run: |
+          # Discover every directory that contains Terraform test files. Each of
+          # these is treated as a separate test use case so that we can run
+          # `terraform init` before `terraform test` for every one of them. This
+          # is required to test different providers, since each use case may pull
+          # in its own set of providers that must be initialised beforehand.
+          test_dirs=$(find test tests -type f -name '*.tftest.hcl' 2>/dev/null \
+            | xargs -r -n1 dirname | sort -u)
+
+          if [ -z "$test_dirs" ]; then
+            echo "No terraform test files found, skipping."
+            exit 0
+          fi
+
+          for dir in $test_dirs; do
+            echo "::group::Running terraform tests in ${dir}"
+            terraform init -backend=false
+            terraform test -test-directory="${dir}"
+            echo "::endgroup::"
+          done
