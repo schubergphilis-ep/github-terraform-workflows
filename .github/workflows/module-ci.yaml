@@ -246,7 +246,7 @@ jobs:
         if: ${{ hashFiles('test/**', 'tests/**') != '' }}
         run: |
           # Discover every directory that contains Terraform test files. Each of
-          # these is treated as a separate test use case so that we can run
+          # these is treated as a separate test use case so that we run
           # `terraform init` before `terraform test` for every one of them. This
           # is required to test different providers, since each use case may pull
           # in its own set of providers that must be initialised beforehand.
@@ -259,8 +259,19 @@ jobs:
           fi
 
           for dir in $test_dirs; do
-            echo "::group::Running terraform tests in ${dir}"
-            terraform init -backend=false
-            terraform test -test-directory="${dir}"
+            if ls "${dir}"/*.tf >/dev/null 2>&1; then
+              # Self-contained use case (e.g. tests/v04): the directory ships its
+              # own .tf config (provider/required_providers), so init and test
+              # are run from inside it to exercise that provider set.
+              echo "::group::Running terraform tests in ${dir} (self-contained config)"
+              terraform -chdir="${dir}" init -backend=false
+              terraform -chdir="${dir}" test -test-directory=.
+            else
+              # Test files only (e.g. a flat tests/ folder): these test the root
+              # module, so init/test run from the repo root.
+              echo "::group::Running terraform tests from ${dir} (root module)"
+              terraform init -backend=false
+              terraform test -test-directory="${dir}"
+            fi
             echo "::endgroup::"
           done
